@@ -53,13 +53,12 @@ def load_data(filepath: str):
         logger.error("Error occurred while loading data: %s", e)
         raise
 
-def evaluate_model(model, X_test, y_test):
+def evaluate_model(model, X_test, y_test, threshold:int):
     """Evaluate the Model and return the Evaluation Metrics"""
     try:
         logger.info("Starting model evaluation...")
-        
-        y_pred = model.predict(X_test)
         y_pred_proba = model.predict_proba(X_test)[:, 1]
+        y_pred = (y_pred_proba >= threshold).astype(int)
 
         accuracy = accuracy_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
@@ -102,6 +101,7 @@ def save_metrics(file_path: str, metrics: dict):
 
 def main():
     try:
+        params = {'threshold':0.55}
         logger.info("=" * 60)
         logger.info("Starting Model Evaluation Pipeline")
         logger.info("=" * 60)
@@ -118,7 +118,7 @@ def main():
         
         logger.info(f"Test data loaded: X_test shape {X_test.shape}, y_test shape {y_test.shape}")
 
-        metrics = evaluate_model(model, X_test, y_test)
+        metrics = evaluate_model(model, X_test, y_test, threshold=params['threshold'])
 
         save_metrics("reports/metrics.json", metrics)
         

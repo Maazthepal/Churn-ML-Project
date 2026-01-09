@@ -52,7 +52,10 @@ def train_model(X_train, y_train, params:dict) -> XGBClassifier:
                               learning_rate=params['learning_rate'],
                               max_depth=params['max_depth'], 
                               scale_pos_weight=params['scale_pos_weight'], 
-                              random_state=42)
+                              random_state=params['random_state'],
+                              subsample=params['subsample'],
+                              colsample_bytree=params['colsample_bytree'],
+                              )
         model.fit(X_train, y_train)
         logger.info("Model training completed successfully !!!")
         return model
@@ -82,8 +85,12 @@ def main():
             'learning_rate': 0.05, 
             'max_depth': 3, 
             'n_estimators': 100, 
-            'scale_pos_weight': 3.0
+            'scale_pos_weight': 2.0,
+            'subsample': 0.8,
+            'colsample_bytree': 0.8,
+            'random_state': 42
         }
+            
             X_train = load_file('data/processed/X_train.csv')
             y_train = load_file('data/processed/y_train.csv')
             model = train_model(X_train, y_train, params)
